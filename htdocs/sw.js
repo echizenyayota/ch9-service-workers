@@ -13,11 +13,11 @@ var cacheVersion = "v1",
     ];
 
 self.addEventListener("install", function(event) {
-    event.waitUntil(chashes.open(cacheVersion).then(function(cache) {
-        return chache.addAll(cachedAssets);
-    }).then(function() {
-        return self.skipWainting();
-    }));
+  event.waitUntil(caches.open(cacheVersion).then(function(cache) { // chashes -> caches
+      return cache.addAll(cachedAssets); // chache -> cache
+  }).then(function() {
+      return self.skipWaiting();
+  }));
 });
 
 self.addEventListener("activate", function(){
