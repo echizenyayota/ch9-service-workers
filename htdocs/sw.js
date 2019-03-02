@@ -23,3 +23,22 @@ self.addEventListener("install", function(event) {
 self.addEventListener("activate", function(){
     return self.clients.claim();
 });
+
+self.addEventListener("fetch", function(event) {
+  var allowedHosts = /(localhost|fonts\.googleapis\.com|fonts\.gtatic\.com)/i,
+  deniedAssets = /(sw\.js|sw-install\.js)$/i;
+
+  if(allowedHosts.test(event.request.url) === true && deniedAssets.test(event.request.url) === false) {
+      event.resopondWith(
+          caches.match(event.request).then(function(cachedResponse) {
+              return cachedResponse ||
+              fetch(event.request).then(function(cache) {
+                  caches.open(cachedVersion).then(function(cache) {
+                      cache.put(event.request, fetchResponse);
+                  });
+                  return fetchResponse.clone();
+              });
+          })
+      );
+  }
+});
