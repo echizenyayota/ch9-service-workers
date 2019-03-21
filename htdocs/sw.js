@@ -27,16 +27,15 @@ self.addEventListener("activate", function(){
 self.addEventListener("fetch", function(event) {
   var allowedHosts = /(localhost|fonts\.googleapis\.com|fonts\.gtatic\.com)/i,
   deniedAssets = /(sw\.js|sw-install\.js)$/i;
-
   if(allowedHosts.test(event.request.url) === true && deniedAssets.test(event.request.url) === false) {
-      event.resopondWith(
+      event.respondWith(
           caches.match(event.request).then(function(cachedResponse) {
               return cachedResponse ||
-              fetch(event.request).then(function(cache) {
-                  caches.open(cachedVersion).then(function(cache) {
-                      cache.put(event.request, fetchResponse);
+              fetch(event.request).then(function(fetchedResponse) {
+                  caches.open(cacheVersion).then(function(cache) {
+                      cache.put(event.request, fetchedResponse);
                   });
-                  return fetchResponse.clone();
+                  return fetchedResponse.clone();
               });
           })
       );
