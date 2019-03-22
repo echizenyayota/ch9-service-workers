@@ -30,6 +30,7 @@ self.addEventListener("fetch", function(event) {
   htmlDocument = /(\/|\.html)$/i;
   if(allowedHosts.test(event.request.url) === true && deniedAssets.test(event.request.url) === false) {
       if (htmlDocument.test(event.request.url) === true) {
+          // ネットワークから取得、オフラインの場合はキャッシュから取得
           event.respondWith(
               fetch(event.request).then(function(response) {
                   caches.open(cacheVersion).then(function(cache) {
@@ -41,6 +42,7 @@ self.addEventListener("fetch", function(event) {
               })
           );
       } else {
+          // HTMLファイル以外のリクエストはキャッシュする
           event.respondWith(
               caches.match(event.request).then(function(cachedResponse) {
                   return cachedResponse ||
