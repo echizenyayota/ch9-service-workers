@@ -26,18 +26,32 @@ self.addEventListener("activate", function(){
 
 self.addEventListener("fetch", function(event) {
   var allowedHosts = /(localhost|fonts\.googleapis\.com|fonts\.gtatic\.com)/i,
-  deniedAssets = /(sw\.js|sw-install\.js)$/i;
+  deniedAssets = /(sw\.js|sw-install\.js)$/i;,
+  htmlDocument = /(\/|\.html)$/i;
   if(allowedHosts.test(event.request.url) === true && deniedAssets.test(event.request.url) === false) {
-      event.respondWith(
-          caches.match(event.request).then(function(cachedResponse) {
-              return cachedResponse ||
-              fetch(event.request).then(function(fetchedResponse) {
+      if (htmlDocument.test(event.request.url) === true) {
+          event.respondWith(
+              fetch(event.request).then(function(response) {
                   caches.open(cacheVersion).then(function(cache) {
-                      cache.put(event.request, fetchedResponse);
+                      cache.put(event.request, response.clone());
                   });
-                  return fetchedResponse.clone();
-              });
-          })
-      );
+                  return response;
+              }).catch(function() {
+                  return caches.match(event.request);
+              })
+          );
+      } else {
+          event.respondWith(
+              caches.match(event.request).then(function(cachedResponse) {
+                  return cachedResponse ||
+                  fetch(event.request).then(function(fetchedResponse) {
+                      caches.open(cacheVersion).then(function(cache) {
+                          cache.put(event.request, fetchedResponse);
+                      });
+                      return fetchedResponse.clone();
+                  });
+              })
+          );
+      }
   }
 });
