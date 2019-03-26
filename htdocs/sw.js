@@ -26,7 +26,7 @@ self.addEventListener("activate", function(){
 
 self.addEventListener("fetch", function(event) {
   var allowedHosts = /(localhost|fonts\.googleapis\.com|fonts\.gtatic\.com)/i,
-  deniedAssets = /(sw\.js|sw-install\.js)$/i;,
+  deniedAssets = /(sw\.js|sw-install\.js)$/i,
   htmlDocument = /(\/|\.html)$/i;
   if(allowedHosts.test(event.request.url) === true && deniedAssets.test(event.request.url) === false) {
       if (htmlDocument.test(event.request.url) === true) {
