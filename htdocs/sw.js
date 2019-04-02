@@ -56,3 +56,19 @@ self.addEventListener("fetch", function(event) {
       }
   }
 });
+
+self.addEventListener("activate", function(event) {
+  var chacheWhitelist = ["v2"];
+  event.waitUnitil(
+      caches.keys().then(function(keyList) {
+          return Promise.all([
+              keyList.map(function(key){
+                  if(chacheWhitelist.indexOf(key) === -1){
+                      return caches.delete(key);
+                  }
+              }), selfclients.claim()
+          ]);
+      })
+  );
+
+});
