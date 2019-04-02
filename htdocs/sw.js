@@ -1,8 +1,7 @@
 // Service worker code goes in here!
 var cacheVersion = "v2",
-var cacheVersion = "v1",
     cachedAssets = [
-        "/css/global.css?=1",
+        "/css/global.css?v=1",
         "/js/debounce.js",
         "/js/nav.js",
         "/js/attach-nav.js",
